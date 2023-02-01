@@ -1,0 +1,45 @@
+<!DOCTYPE HTML>
+ <html>
+    <head>
+        <title>Sample1_24</title>
+        <script src="js/modernizr.js"></script>
+        <script src="js/arc.js"></script>
+        <script src="js/bezier.js"></script>
+        <script src="js/line.js"></script>
+        <script src="js/linejoin.js"></script>
+        <script src="js/rect.js"></script>
+        <script type="application/javascript">
+            let context;
+            function eventWindowLoaded() {
+                canvasApp();
+            }
+            function canvasSupport() {
+                return Modernizr.canvas;
+            }
+            function canvasApp() {
+                if(!canvasSupport()) {
+                    return;
+                } else {
+                    let theCanvas = document.getElementById("canvas");
+                    context = theCanvas.getContext("2d");
+                    drawScreen();
+                    function drawScreen() {
+                        context.fillStyle = '#aaaaaa';
+                        context.fillRect(0,0,500,500);
+                        context.fillStyle = '#d26b11';
+                        context.font = '20px _sans';
+                        context.textBaseline = 'top';
+                        context.fillText("Canvas!",0,0);
+                    }
+                }
+            }
+        </script>
+    </head>
+    <body onload="eventWindowLoaded();">
+        <div style="position:absolute; top:50px; left:50px;">
+            <canvas id="canvas" width="500" height="500">
+                若看到这个文字，则说明浏览器不支持WebGL!
+            </canvas>
+        </div>
+    </body>
+ </html>
