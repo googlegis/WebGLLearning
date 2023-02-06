@@ -63,19 +63,19 @@ function loadShaderSerial(gl, vshader, fshader) {
 
     gl.linkProgram(program);//链接着色器程序
 
-    var linked = gl.getProgramParameter(program,gl.LINK_STATUS);
-    if(!linked && !gl.isContextLost()) {
-        var error = gl.getProgramInfoLog(program);
-        console.log("Error in program linking:" + error);//
+    var linked = gl.getProgramParameter(program,gl.LINK_STATUS);//检查链接是否成功
+    if(!linked && !gl.isContextLost()) { //若链接不成功
+        var error = gl.getProgramInfoLog(program); //获取错误信息
+        console.log("Error in program linking:" + error);// 打印错误信息
 
-        gl.deleteProgram(program);
-        gl.deleteProgram(fragmentShader);
-        gl.deleteProgram(vertexShader);
+        gl.deleteProgram(program); //删除着色器程序
+        gl.deleteProgram(fragmentShader); //删除片元着色器
+        gl.deleteProgram(vertexShader);//删除顶点着色器
 
-        return null;
+        return null;//返回空
     }
 
-    gl.useProgram(program);
-    gl.enable(gl.DEPTH_TEST);
-    return program;
+    gl.useProgram(program); //指明使用的着色器编号
+    gl.enable(gl.DEPTH_TEST);//打开深度检测
+    return program;//返回着色器程序
 }

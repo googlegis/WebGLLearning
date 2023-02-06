@@ -1,0 +1,133 @@
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+        <title>Sampel4_3</title>
+        <script type="text/javascript" src="js/Matrix.js"></script>
+        <script type="text/javascript" src="js/MatrixState.js"></script>
+        <script type="text/javascript" src="js/GLUtil.js"></script>
+        <script type="text/javascript" src="js/Cube.js"></script>
+        <script type="text/javascript" src="js/LoadShaderUtil.js"></script>
+        <script>
+            var gl;
+
+            var ms = new MatrixState();
+
+            var ooTri;
+
+            var shaderProgArray = new Array();
+
+            var currentYAngle = 0;
+
+            var currentXAngle = 0;
+
+            var incAngle = 0.5;
+
+            var lastClickX,lastClickY;
+
+            var ismoved = false;
+
+            document.onmousedown = function (event) {
+                var x = event.clientX;
+
+                var y = event.clientX;
+
+                var rect = (event.target || event.srcElement).getBoundingClientRect();
+                if(rect.left<=x && x < rect.right && rect.top <= y && y < rect.bottom) {
+                    ismoved = true;
+                    lastClickX = x;
+                    lastClickY = y;
+                }                
+            };
+            
+            document.onmouseup = function (event) {
+                ismoved = false;                
+            }
+            
+            document.onmousemove = function (event) {
+                var x = event.clientX, y = event.clientY;
+                if(ismoved) {
+                    currentYAngle = currentYAngle + (x - lastClickX) * incAngle;
+                    currentXAngle = currentXAngle + (y - lastClickY) * incAngle;
+                }
+                lastClickX = x;
+                lastClickY = y;
+            };
+
+            function start() {
+
+                var canvas = document.getElementById('bncanvas');
+
+                gl = canvas.getContext('webgl2', {antialias: true});
+
+                if(!gl) {
+                    alert("创建GLES上下文失败,不支持webGL2.0!");//显示错误信息
+                    return;
+                }
+
+                //设置端口
+                gl.viewport(0,0,canvas.width,canvas.height);
+
+                gl.clearColor(0.0,0.0,0.0,1.0);
+
+                ms.setInitStack();
+
+                ms.setCamera(-16,8,85,0,0,0,0,1.0,0.0);
+
+                ms.setProjectOrtho(-1.5,1.5,-1,1,1,100);
+
+                gl.enable(gl.DEPTH_TEST); //
+
+                loadShaderFile("shader/vtrtex.bns",0);
+                loadShaderFile("shader/fragment.bns",0);
+
+                if(shaderProgArray[0]) {
+                    ooTri = new Cube(gl, shaderProgArray[0]);
+                } else  {
+                    setTimeout(function () {
+                        ooTri = new Cube(gl, shaderProgArray[0]);
+                    },90);
+                }
+
+                setInterval("drawFrame();", 20);
+            }
+
+            function drawFrame() {
+                if(!ooTri) {
+                    console.log("加载未完成");
+                    return;
+                }
+
+                gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+
+                ms.pushMatrix();
+
+                ms.translate(0.5, 0, 0);
+
+                ms.rotate(currentYAngle, 0, 1, 0);
+
+                ms.rotate(currentXAngle, 1, 0, 0);
+
+                ooTri.drawSelf(ms);
+
+                ms.popMatrix();
+
+                ms.pushMatrix();
+
+                ms.translate(-0.5,0,0);
+
+                ms.rotate(currentYAngle, 0, 1, 0);
+
+                ms.rotate(currentXAngle, 1, 0, 0);
+
+                ooTri.drawSelf(ms);
+
+                ms.popMatrix();
+            }
+        </script>
+    </head>
+    <body onload="start();">
+        <canvas height="800" width="1200" id="bncanvas">
+            若看到这个文字，说明浏览器不支持WebGL2.0!
+        </canvas>
+    </body>
+</html>
