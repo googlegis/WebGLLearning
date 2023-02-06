@@ -5,12 +5,13 @@
         <script type="text/javascript" src="js/Matrix.js"></script>
         <script type="text/javascript" src="js/MatrixState.js"></script>
         <script type="text/javascript" src="js/GLUtil.js"></script>
-        <script type="text/javascript" src="js/Cube.js"></script>
+        <script type="text/javascript" src="js/PointOrLines.js"></script>
         <script type="text/javascript" src="js/LoadShaderUtil.js"></script>
         <script>
             var gl; //GLES 上下文
             var ms = new MatrixState();// 变换矩阵管理类对象
             var ooTri; // 要绘制的3D物体
+            var currentmode;//声明全局变量，获得radio的值
             var shaderProgArray = new Array(); //着色器程序列表，集中管理
             var currentYAngle = 0;//绕Y轴旋转角度
             var currentXAngle = 0;//绕X轴旋转角度
@@ -82,10 +83,10 @@
 
                 //如果着色器已加载完毕
                 if(shaderProgArray[0]) {
-                    ooTri = new Cube(gl, shaderProgArray[0]);//创建绘制3D物体
+                    ooTri = new PointOrLines(gl, shaderProgArray[0]);//创建绘制3D物体
                 } else {
                     setTimeout(function () {
-                        ooTri = new Cube(gl, shaderProgArray[0]);//创建绘制3D物体
+                        ooTri = new PointOrLines(gl, shaderProgArray[0]);//创建绘制3D物体
                     }, 60); // 休息60ms后再执行
                 }
                 setInterval("drawFrame();",20);
@@ -100,23 +101,29 @@
                 // 清除着色器缓冲与深度缓冲
                 gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
-                ms.pushMatrix();//保护现场
-                ms.translate(-0.6, 0,0);//执行偏移
-                ms.rotate(currentYAngle, 0, 1, 0);//执行绕Y轴旋转
-                ms.rotate(currentXAngle, 1, 0, 0);//执行绕X轴旋转
-                ooTri.drawSelf(ms);//绘制物体
-                ms.popMatrix();//恢复现场
+                var radionum = document.getElementById("userlist").userid;//获取radio列表
+                for(var i=0;i<radionum.length;i++) {//遍历radio列表，将被选中的radio的value取得
+                    if(radionum[i].checked) { //判断radio是被选择
+                        currentmode = radionum[i].value;
+                    }
+                }
 
                 ms.pushMatrix();//保护现场
-                ms.translate(0.6, 0, 0);//执行偏移
+                ms.translate(-1, 0.3, 0);//执行偏移
                 ms.rotate(currentXAngle,1,0,0);//执行绕X轴旋转
                 ms.rotate(currentYAngle,0,1,0);//执行绕Y轴旋转
-                ms.rotate(30,0,0,1);//执行绕Z轴旋转
-                ms.scale(0.4,2,0.6);//执行缩放
-                ooTri.drawSelf(ms);//绘制物体
+                ooTri.drawSelf(ms,currentmode);//绘制物体
                 ms.popMatrix();//恢复现场
             }
         </script>
+        <form id="userlist" >
+            <div>
+                <input type="radio" name="userid" value="1" checked="checked">GL_POINTS&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                <input type="radio" name="userid" value="2">GL_LINES</div>
+            <div>
+            <input type="radio" name="userid" value="3">GL_LINE_STRIP&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            <input type="radio" name="userid" value="4">GL_LINE_LOOP</div>
+        </form>
     </head>
     <body onload="start();">
         <canvas height="800" width="1200" id="bncanvas">
