@@ -99,17 +99,28 @@
                 // 清除着色器缓冲与深度缓冲
                 gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
-                //保护现场
-                ms.pushMatrix();
 
-                //执行偏移
-                ms.translate(-0.6, 0,0);
+                ms.pushMatrix();//保护现场
+                ms.translate(-0.6, 0,0);//执行偏移
+                ms.rotate(currentYAngle, 0, 1, 0);//执行绕Y轴旋转
+                ms.rotate(currentXAngle, 1, 0, 0);//执行绕X轴旋转
+                ooTri.drawSelf(ms);//绘制物体
+                ms.popMatrix();//恢复现场
 
+
+                ms.pushMatrix();//保护现场
+                ms.translate(0.6, 0, 0);//执行偏移
+                ms.rotate(currentXAngle,1,0,0);//执行绕X轴旋转
+                ms.rotate(currentYAngle,0,1,0);//执行绕Y轴旋转
+                ms.rotate(45,0,0,1);//执行绕Z轴旋转
+                ooTri.drawSelf(ms);//绘制物体
+                ms.popMatrix();//恢复现场
             }
-
-
-
-
         </script>
     </head>
+    <body onload="start();">
+        <canvas height="800" width="1200" id="bncanvas">
+            若看到这个文字，说明浏览器不支持WebGL2.0!
+        </canvas>
+    </body>
 </html>
