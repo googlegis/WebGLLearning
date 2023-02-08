@@ -9,16 +9,16 @@ function Ball(
 	gl,						 					//GL上下文
 	programIn,									//着色器程序id
 	BallR										//球的半径
-	) {
-	this.vertexData = new Array();
+	){
+	this.vertexData=new Array();
 
-	var r = BallR;
+	var r=BallR;
 
-	this.initVertexData = function () {
+	this.initVertexData = function(){
 
 		var angleSpan = 10;//将求进行单位切分的角度
 
-		for (var vAngle = -90; vAngle < 90; vAngle = vAngle + angleSpan) // 垂直方向angleSpan度一份
+		for(var vAngle = -90; vAngle < 90; vAngle = vAngle + angleSpan) // 垂直方向angleSpan度一份
 		{
 			for (var hAngle = 0; hAngle <= 360; hAngle = hAngle + angleSpan)// 水平方向angleSpan度一份
 			{
@@ -51,39 +51,48 @@ function Ball(
 	};
 	this.initVertexData();
 
-	this.vcount = this.vertexData.length / 3;				//得到顶点数量
+	this.vcount=this.vertexData.length/3;				//得到顶点数量
 
-	this.vertexBuffer = gl.createBuffer();				//创建顶点坐标数据缓冲
+	this.vertexBuffer=gl.createBuffer();				//创建顶点坐标数据缓冲
 
-	gl.bindBuffer(gl.ARRAY_BUFFER, this.vertexBuffer); 	//绑定顶点坐标数据缓冲
+	gl.bindBuffer(gl.ARRAY_BUFFER,this.vertexBuffer); 	//绑定顶点坐标数据缓冲
 
 	//将顶点坐标数据送入缓冲
-	gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(this.vertexData), gl.STATIC_DRAW);
+	gl.bufferData(gl.ARRAY_BUFFER,new Float32Array(this.vertexData),gl.STATIC_DRAW);
 
-	this.program = programIn;		//初始化着色器程序id
+	this.normalData = this.vertexData;
+	this.normalBuffer = gl.createBuffer();
+	gl.bindBuffer(gl.ARRAY_BUFFER,this.normalBuffer);//
+	gl.bufferData(gl.ARRAY_BUFFER,new Float32Array(this.normalData),gl.STATIC_DRAW);
 
-	this.drawSelf = function (ms)//绘制物体的方法
-	{
+	this.program=programIn;		//初始化着色器程序id
+
+	this.drawSelf=function(ms)//绘制物体的方法
+	{	
 		gl.useProgram(this.program);//指定使用某套着色器程序
 
 		//获取总变换矩阵引用id
-		var uMVPMatrixHandle = gl.getUniformLocation(this.program, "uMVPMatrix");
+		var uMVPMatrixHandle=gl.getUniformLocation(this.program, "uMVPMatrix");
 
 		//将总变换矩阵送入渲染管线
-		gl.uniformMatrix4fv(uMVPMatrixHandle, false, new Float32Array(ms.getFinalMatrix()));
+		gl.uniformMatrix4fv(uMVPMatrixHandle,false,new Float32Array(ms.getFinalMatrix()));
+
+		var uLightLocationHandle = gl.getUniformLocation(this.program, "uLightLocation");
+		gl.uniform3fv(uLightLocationHandle,new Float32Array([lightManager.lx,lightManager.ly,lightManager.lz]));
+
 
 		gl.enableVertexAttribArray(gl.getAttribLocation(this.program, "aPosition"));//启用顶点坐标数据数组
-
 		gl.bindBuffer(gl.ARRAY_BUFFER, this.vertexBuffer);	//绑定顶点坐标数据缓冲
-
 		//给管线指定顶点坐标数据
-		gl.vertexAttribPointer(gl.getAttribLocation(this.program, "aPosition"), 3, gl.FLOAT, false, 0, 0);
+		gl.vertexAttribPointer(gl.getAttribLocation(this.program,"aPosition"),3,gl.FLOAT,false,0, 0);
+
+		gl.enableVertexAttribArray(gl.getAttribLocation(this.program,"aNormal"));
+		gl.bindBuffer(gl.ARRAY_BUFFER, this.normalBuffer);//
+		gl.vertexAttribPointer(gl.getAttribLocation(this.program,"aNormal"));
 
 		var muRHandle = gl.getUniformLocation(this.program, "uR");
-
-		gl.uniform1f(muRHandle, r);
-
-		gl.drawArrays(gl.TRIANGLES, 0, this.vcount);		//用顶点法绘制物体
-
+		gl.uniform1f(muRHandle,r);
+		
+		gl.drawArrays(gl.TRIANGLES, 0, this.vcount);	//用顶点法绘制物体
 	}
 }

@@ -16,6 +16,8 @@
 
         var ball;//要绘制的3D物体
 
+        var lightLocationX;//当前光源位置的X坐标
+
         var shaderProgArray=new Array();//着色器程序列表，集中管理
 
         var currentYAngle=0;//绕y轴旋转角度
@@ -41,7 +43,6 @@
             }
         };
 
-
         document.onmouseup=function(event){ismoved=false;};//鼠标抬起的监听
 
         document.onmousemove = function(event)//鼠标移动时的监听
@@ -62,6 +63,7 @@
         function start()
         {
 
+
             var canvas = document.getElementById('bncanvas');//获取3D Canvas
 
             gl = canvas.getContext('webgl2', { antialias: true });//获取GL上下文
@@ -70,6 +72,12 @@
             {
                 alert("创建GLES上下文失败，不支持webGL2.0!");//显示错误提示信息
                 return;
+            }
+
+            var lightOffset = document.getElementById("myRange").value;//获取当前拖拉条的值
+
+            if(lightOffset!= lightLocationX) { //如果用户改变拖拉条的值
+                lightLocationX = lightOffset;
             }
 
             canvas.addEventListener('touchstart', function(event) {
@@ -143,15 +151,21 @@
 
             ms.pushMatrix();//保护现场
 
-            ms.translate(0, 0, 0);//执行平移
-
+            ms.pushMatrix();//保护现场
+            ms.translate(-0.6, 0, 0);//执行平移
             ms.rotate(currentYAngle, 0, 1, 0);//执行绕Y轴旋转
-
             ms.rotate(currentXAngle, 1, 0, 0);//执行绕X轴旋转
-
             ball.drawSelf(ms);//绘制物体
-
             ms.popMatrix();//恢复现场
+
+            ms.pushMatrix();//
+            ms.translate(0.6,0,0);
+            ms.rotate(currentYAngle,0,1,0);//
+            ms.rotate(currentXAngle,1,0,0);//
+            ball.drawSelf(ms);
+            ms.popMatrix();
+
+            ms.popMatrix();
         }
     </script>
 </head>
@@ -160,5 +174,8 @@
     <canvas height="800" width="1200" id="bncanvas">
         若看到这个文字，说明浏览器不支持WebGL!
     </canvas>
+    <br/>
+    <b>请调整拖拉条的位置改变光照位置：</b>
+    <input type="range" id="myRange" style="width:500px"  max="20" min="-20" >
 </body>
 </html>
