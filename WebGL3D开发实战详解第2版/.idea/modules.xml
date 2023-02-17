@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/WebGL3D.iml" filepath="$PROJECT_DIR$/.idea/WebGL3D.iml" />
+      <module fileurl="file://$PROJECT_DIR$/WebGL3D开发实战详解第2版.iml" filepath="$PROJECT_DIR$/WebGL3D开发实战详解第2版.iml" />
     </modules>
   </component>
 </project>
