@@ -92,7 +92,7 @@ function init() {
         stats.update();
         step += 0.02;
         if (camera instanceof THREE.Camera) {
-            var x = 10 + ( 100 * (Math.sin(step)));
+            var x = 10 + ( 100 * (Math.sin(step)));//计算
             camera.lookAt(new THREE.Vector3(x, 10, 0));
             lookAtMesh.position.copy(new THREE.Vector3(x, 10, 0));
         }

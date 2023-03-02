@@ -18,7 +18,7 @@ function init() {
     mats.push(new THREE.MeshBasicMaterial({
         color: 0x009e60
     }));
-// mats.push(new THREE.MeshBasicMaterial({
+    // mats.push(new THREE.MeshBasicMaterial({
     // color: 0x009e60
     // }));
     mats.push(new THREE.MeshBasicMaterial({

@@ -3,12 +3,18 @@ function init() {
     // use the defaults
     let stats = initStats();
     let renderer = initRenderer();
+
+    let bufferGeometry;
+    let velocitys;
+
     // create a scene, that will hold all our elements such as objects, cameras and lights.
     let scene = new THREE.Scene();
-    let camera = initCamera(new THREE.Vector3(20,30,0));
+    
+    let camera = initCamera(new THREE.Vector3(20,40,110));
+    camera.lookAt(new THREE.Vector3(20,30,0));
 
-    var system1;
-    var cloud;
+    const counts = 1500;
+    const range = 40;
 
     var controls = new function () {
         this.size = 3;
@@ -19,9 +25,10 @@ function init() {
         this.sizeAttenuation = true;
 
         this.redraw = function () {
+
             scene.remove(scene.getObjectByName("particles1"));
 
-            createPointCloud(controls.size, controls.transparent, controls.opacity,
+            createGeometries(controls.size, controls.transparent, controls.opacity,
                 controls.sizeAttenuation,controls.color);
         }
     }
@@ -35,13 +42,20 @@ function init() {
 
     controls.redraw();
 
-    render();
+    setTimeout(function name(params) {
+        animate();
+    },1000);
 
-    let step = 0;
-
-    function createPointCloud(size, transparent, opacity, sizeAttenuation, color) {
+    /**
+     * 创建单个对象
+     * @param {大小} size 
+     * @param {*} transparent 
+     * @param {*} opacity 
+     * @param {*} sizeAttenuation 
+     * @param {*} color 
+     */
+    function createGeometry(size, transparent, opacity, sizeAttenuation, color) {
         var texture = new THREE.TextureLoader().load("../../assets/textures/particles/raindrop-3.png");
-        var geom = new THREE.BufferGeometry();
 
         var material = new THREE.PointsMaterial({
             size: size,
@@ -53,48 +67,90 @@ function init() {
             color: color
         });
 
-        var range = 40;
-        var vertices = [];
+        var positions = new Float32Array(counts * 3);
 
-        for (var i = 0; i < 1500; i++) {
-            // var particle = new THREE.Vector3(
-            //     Math.random() * range - range / 2,
-            //     Math.random() * range * 1.5,
-            //     // Math.random() * range - range / 2
-            //     1 + (i/100)
-            // )
-            // particle.velocityY = 0.1 + Math.random() / 5;
-            // particle.velocityX = (Math.random() - 0.5) / 3;
-            vertices.push(Math.random() * range - range / 2);
-            vertices.push(Math.random() * range * 1.5);
-            vertices.push(1 + (i/100));
+        velocitys = new Float32Array(counts * 3);
+
+        for (var i = 0; i < counts; i ++) {
+
+            const x = Math.random() * range - range / 2;
+            const y = Math.random() * range * 1.5;
+            const z = 1 + (i/100);
+
+            positions[i * 3 + 0] = x;
+            positions[i * 3 + 1] = y;
+            positions[i * 3 + 2] = z;
+
+
+            velocitys[i * 3 + 0] =  (Math.random() - 0.5) / 3;
+            velocitys[i * 3 + 1] = 0.1 + Math.random() / 5;
+            velocitys[i * 3 + 2] = 0;
         }
 
-        let posAttributes = new THREE.Float32BufferAttribute(vertices,3);
-        geom.setAttribute("position", posAttributes);
+        bufferGeometry = new THREE.BufferGeometry(); // r125 之后不能使用THREE.Geometry对象
+        bufferGeometry.dynamic = true;
+        bufferGeometry.setAttribute("position", new THREE.BufferAttribute(positions,3));
+        bufferGeometry.computeBoundingSphere();
+        
+        mesh = new THREE.Points(bufferGeometry, material);
+        mesh.name = "particles1";
 
-        cloud = new THREE.Points(geom, material);
-        cloud.sortParticles = true;
-        cloud.name = "particles1"
-
-        scene.add(cloud);
+        scene.add(mesh);        
     }
 
-    function render() {
-        stats.update();
+    //创建对象集
+    function createGeometries(size, transparent, opacity, sizeAttenuation, color) {
+        createGeometry(size, transparent, opacity, sizeAttenuation, color)
+        window.addEventListener('resize', onWindowResize);
+    }
 
-        var verticles = cloud.geometry.verticles;
-        vertices.forEach(function (v) {
-            v.y = v.y - (v.velocityY);
-            v.x = v.x - (v.velocityX);
+    function onWindowResize() {
+        camera.aspect = window.innerWidth / window.innerHeight;
+        camera.updateProjectionMatrix();
 
-            if (v.y <= 0) v.y = 60;
-            if (v.x <= -20 || v.x >= 20) v.velocityX = v.velocityX * -1;
-        });
-        cloud.geometry.verticesNeedUpdate = true;
+        renderer.setSize(window.innerWidth, window.innerHeight);
+    }
 
-        // render using requestAnimationFrame
-        requestAnimationFrame(render);
+    function animate() {
+        
+        requestAnimationFrame(animate);
+
+        scene.children.forEach(function (child) {
+            if(child instanceof THREE.Points) {
+                var verticles = child.geometry.attributes.position.array;
+                // verticles.forEach(function(v){
+                //     console.log(v);
+                // })
+
+                for (var i = 0; i < counts; i ++) {
+
+                    let x = verticles[i * 3 + 0];
+                    let y = verticles[i * 3 + 1];
+                    
+                    let stepx = velocitys[i * 3 + 0];
+                    let stepy = velocitys[i * 3 + 1];
+        
+                    verticles[i * 3 + 0] = x - stepx;
+                    verticles[i * 3 + 1] = y - stepy;
+        
+                    if(verticles[i * 3 + 1] <= 0)  {
+                        verticles[i * 3 + 1] = 60
+                    }
+        
+                    if(verticles[i * 3 + 0] <= -20 || verticles[i * 3 + 0] >= 20) {
+                        velocitys[i * 3 + 0] = velocitys[i * 3 + 0] * -1;
+                    }
+                }
+            }
+        })
+
+        bufferGeometry.attributes.position.needsUpdate = true;
+
+        // bufferGeometry.attributes.color.needsUpdate = true;
+        bufferGeometry.computeBoundingSphere();
+        
         renderer.render(scene, camera);
+
+        stats.update();        
     }
 }

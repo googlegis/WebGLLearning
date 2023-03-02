@@ -21,6 +21,7 @@ function init() {
     render();
 
     function createPoints() {
+        
         var geom = new THREE.BufferGeometry();
         var vertices = [];
         var colors = [];

@@ -7,4 +7,13 @@
 机械工业出版社 2019年6月第1版第1次印刷
 
 
-基于 r144dev 重新编写
+基于 r144dev 重新编写, r125之后，移除了Three.Geometry，花费了不少时间修改对应的内容。
+
+源码参考
+
+https://www.hzcourse.com/web/refbook/detail/8358/216
+
+
+或者
+
+https://github.com/josdirksen/learning-threejs-third

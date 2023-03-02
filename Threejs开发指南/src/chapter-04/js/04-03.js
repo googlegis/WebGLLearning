@@ -68,8 +68,11 @@ function init() {
     var gui = new dat.GUI();
     gui.addColor(controls, 'color');
     gui.add(controls, 'rotationSpeed', 0, 0.5);
+    
     gui.add(controls, 'addCube');
     gui.add(controls, 'removeCube');
+
+    
     gui.add(controls, 'cameraNear', 0, 50).onChange(function (e) {
         camera.near = e;
         camera.updateProjectionMatrix();

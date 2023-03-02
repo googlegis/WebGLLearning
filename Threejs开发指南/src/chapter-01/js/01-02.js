@@ -1,15 +1,15 @@
 function init() {
     console.log("Using Three js version:" + THREE.REVISION)
 
-    var scene = new THREE.Scene();
-    var camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
+    var scene = new THREE.Scene(); //场景
+    var camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);//摄像机
 
-    var renderer = new THREE.WebGLRenderer();
+    var renderer = new THREE.WebGLRenderer();//渲染器对象
     renderer.setClearColor(new THREE.Color(0x000000));
     renderer.setSize(window.innerWidth, window.innerHeight);
     renderer.shadowMap.enabled = true;
 
-    var axes = new THREE.AxesHelper(20);
+    var axes = new THREE.AxesHelper(20);//添加轴
     scene.add(axes);
 
     var planeGeometry = new THREE.PlaneGeometry(60,20);

@@ -7,16 +7,38 @@ function init() {
     var renderer = new THREE.WebGLRenderer();
     renderer.setClearColor(new THREE.Color(0x000000));
     renderer.setSize(window.innerWidth, window.innerHeight);
-    renderer.shadowMap.enabled = true;
+    renderer.shadowMap.enabled = true;//阴影效果
 
-    createTree(scene);
-    createHouse(scene);
-    createGroundPlane(scene);
-    createBoudingWall(scene);
+    // createTree(scene); //添加绿色树对象
+    // createHouse(scene);//添加蒙古包房子
+    // createGroundPlane(scene);//地面绿色平面
+    //  createBoudingWall(scene);//四周围墙
 
-    var axes = new THREE.AxesHelper(20);
+    var axes = new THREE.AxesHelper(20);//方向轴
     scene.add(axes);
 
+    //添加正方体
+    var cubeGeometry = new THREE.BoxGeometry(4,4,4);
+    var cubeMaterial = new THREE.MeshBasicMaterial({
+        color: 0xFF0000,
+        // wireframe: true
+    });
+    var cube = new THREE.Mesh(cubeGeometry, cubeMaterial);
+    cube.castShadow = true;//设置为可投影，可是看不出投影效果
+    cube.position.set(-4,2,0);
+    scene.add(cube);//正方形
+
+    //添加球体
+    var sphereGeometry = new THREE.SphereGeometry(4,20,20);
+    var sphereMaterial = new THREE.MeshLambertMaterial({
+        color: 0x7777FF
+    })
+    var sphere = new THREE.Mesh(sphereGeometry, sphereMaterial);
+    sphere.position.set(20,4,2);
+    sphere.castShadow = true;
+    scene.add(sphere);
+
+    //添加底板
     var planeGeometry = new THREE.PlaneGeometry(60,20);
     var planeMaterial = new THREE.MeshBasicMaterial({
         color: 0xAAAAAA
@@ -27,53 +49,34 @@ function init() {
     plane.receiveShadow = true;
     scene.add(plane)
 
-    var cubeGeometry = new THREE.BoxGeometry(4,4,4);
-    var cubeMaterial = new THREE.MeshBasicMaterial({
-        color: 0xFF0000,
-        wireframe: true
-    });
-    var cube = new THREE.Mesh(cubeGeometry, cubeMaterial);
-    cube.castShadow = true;
-    cube.position.set(-4,2,0);
-    scene.add(cube);
-
-    var sphereGeometry = new THREE.SphereGeometry(4,20,20);
-    var sphereMaterial = new THREE.MeshLambertMaterial({
-        color: 0x7777FF
-    })
-    var sphere = new THREE.Mesh(sphereGeometry, sphereMaterial);
-    sphere.position.set(20,4,2);
-    sphere.castShadow = true;
-    scene.add(sphere);
-
     camera.position.set(-30, 40, 30);
     camera.lookAt(scene.position);
 
-    // var spotLight = new THREE.SpotLight(0xFFFFFF);
-    // spotLight.position.set(-40,40,-15);
-    // spotLight.castShadow = true;
-    // spotLight.shadow.mapSize = new THREE.Vector2(1024, 1024);
-    // spotLight.shadow.camera.far = 130;
-    // spotLight.shadow.camera.near = 40;
-    // scene.add(spotLight);
-    //
-    // var ambienLight = new THREE.AmbientLight(0x353535);
-    // scene.add(ambienLight);
+    var spotLight = new THREE.SpotLight(0xFFFFFF);
+    spotLight.position.set(-40,40,-15);
+    spotLight.castShadow = true;
+    spotLight.shadow.mapSize = new THREE.Vector2(1024, 1024);
+    spotLight.shadow.camera.far = 130;
+    spotLight.shadow.camera.near = 40;
+    scene.add(spotLight);
+    
+    var ambienLight = new THREE.AmbientLight(0x353535);
+    scene.add(ambienLight);
 
-    const dirLight = new THREE.DirectionalLight(0xffffff);
-    dirLight.position.set(-40,40,-15);
-    dirLight.castShadow = true;
-    dirLight.shadow.camera.top = 2;
-    dirLight.shadow.camera.bottom = -2;
-    dirLight.shadow.camera.left = -2;
-    dirLight.shadow.camera.right = 2;
-    dirLight.shadow.camera.near = 0.1
-    dirLight.shadow.camera.far = 40;
-    scene.add(dirLight)
+    // const dirLight = new THREE.DirectionalLight(0xffffff);
+    // dirLight.position.set(-40,40,-15);
+    // dirLight.castShadow = true;
+    // dirLight.shadow.camera.top = 2;
+    // dirLight.shadow.camera.bottom = -2;
+    // dirLight.shadow.camera.left = -2;
+    // dirLight.shadow.camera.right = 2;
+    // dirLight.shadow.camera.near = 0.1
+    // dirLight.shadow.camera.far = 40;
+    // scene.add(dirLight)
 
-    const hemiLight = new THREE.HemisphereLight(0xffffff, 0x444444);
-    hemiLight.position.set(0,20,0);
-    //scene.add(hemiLight);
+    // const hemiLight = new THREE.HemisphereLight(0xffffff, 0x444444);
+    // hemiLight.position.set(0,20,0);
+    // scene.add(hemiLight);
 
     document.getElementById("webgl-output").appendChild(renderer.domElement);
     renderer.render(scene, camera);
@@ -144,6 +147,7 @@ function createHouse(scene) {
     scene.add(baseMesh);
 }
 
+//哈哈，这也能叫树
 function createTree(scene) {
     var trunk = new THREE.BoxGeometry(1,8,1);
     var leaves = new THREE.SphereGeometry(4);
