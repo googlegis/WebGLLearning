@@ -1,3 +1,8 @@
+<h1>第四版已出，看第四版去了，不再对第三版进行移植更新，有需要第三版的可以参考最下方的GitHub地址。</h1>
+
+第四版 https://github.com/PacktPublishing/Learn-Three.js-Fourth-edition 
+
+
 # Three.js 开发指南
 ## 基于WebGL和HTML5在网页上渲染3D图形和动画(原书第3版)
 ## Programming 3D animations and visualization for the web with HTML5 and WebGL, Third Edition
@@ -16,4 +21,6 @@ https://www.hzcourse.com/web/refbook/detail/8358/216
 
 或者
 
-https://github.com/josdirksen/learning-threejs-third
+第三版 https://github.com/josdirksen/learning-threejs-third
+
+

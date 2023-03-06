@@ -31,8 +31,8 @@ import {
 	TextureLoader,
 	Vector2,
 	Vector3
-} from 'three';
-import chevrotain from '../libs/chevrotain.module.min.js';
+} from '../';
+import chevrotain from '../libs/chevrotain.min.js';
 
 
 class VRMLLoader extends Loader {

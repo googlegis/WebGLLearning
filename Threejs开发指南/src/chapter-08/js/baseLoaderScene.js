@@ -16,6 +16,9 @@ function BaseLoaderScene(providedCamera, shouldAddLights, shouldRotate, updateMe
   this.shouldRotate = (shouldRotate !== undefined) ? shouldRotate : true;
   this.updateMesh = updateMesh
 
+
+
+
   // initialize basic renderer
   this.renderer = initRenderer({
     antialias: true
@@ -81,5 +84,8 @@ function BaseLoaderScene(providedCamera, shouldAddLights, shouldRotate, updateMe
 
   // add the lights
   if (this.withLights) this._addLights();
+
+
+
 
 }

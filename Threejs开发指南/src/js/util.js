@@ -584,3 +584,13 @@ function computeNormalsGroup(group) {
         group.children.forEach(function(child) {computeNormalsGroup(child)});
     }
 }
+
+
+function onWindowResize(renderer,camera) {
+
+    camera.aspect = window.innerWidth / window.innerHeight;
+    camera.updateProjectionMatrix();
+
+    renderer.setSize(window.innerWidth, window.innerHeight);
+
+}
